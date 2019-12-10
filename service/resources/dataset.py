@@ -2,6 +2,7 @@ from flask_restful import Resource
 from flask import request, flash, redirect
 from werkzeug.utils import secure_filename
 import os, shutil
+import service.config as config
 
 class Dataset(Resource):
     # 允许的文件后缀类型
@@ -18,16 +19,14 @@ class Dataset(Resource):
     def post(self, user_id):
         # 检查file是否在request中
         if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
+            return {}, 400
 
         # 获取文件对象
         file = request.files['file']
 
         # 如果用户没有选择文件，确点击了上传，那么浏览器还是会发送一个POST请求
         if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
+            return {}, 400
 
         dataset_name = os.path.split(request.form['relativePath'])[0]
 
@@ -35,6 +34,8 @@ class Dataset(Resource):
             directory = os.path.join(config.UPLOAD_FOLDER, 
                                     user_id,
                                     dataset_name)
+        else:
+            return {}, 400
 
         # 若文件夹不存在，递归地创建
         if not os.path.isdir(directory):

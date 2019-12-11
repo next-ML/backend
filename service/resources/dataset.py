@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from flask import request, flash, redirect
+from flask import request
 from werkzeug.utils import secure_filename
 import os, shutil
 import service.config as config

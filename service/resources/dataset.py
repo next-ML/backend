@@ -5,6 +5,7 @@ from flask_restful import Resource
 from flask import request
 from werkzeug.utils import secure_filename
 
+import service.config as config
 from service.common.utils import DatasetHelper
 
 
@@ -27,12 +28,13 @@ class Dataset(Resource):
         file = request.files['file']
         if file.filename == '':
             return {}, 400
-        if file and Dataset.allowed_file(file.filename):
-            directory = os.path.join(config.UPLOAD_FOLDER, 
-                                     user_id,
-                                     dataset_name)
-        else:
+        if not file or \
+            not Dataset.allowed_file(file.filename):
             return {}, 400
+        
+        directory = os.path.join(config.UPLOAD_FOLDER, 
+                                 user_id,
+                                 'dataset')
 
         # If directory not exist now, create recursively.
         if not os.path.isdir(directory):

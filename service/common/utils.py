@@ -18,7 +18,9 @@ class DatasetHelper(object):
             user_id: dataset this belongs to whom.
             dataset_name: name of dataset.
         """
-        self._user_root = os.path.join(config.UPLOAD_FOLDER, user_id)
+        self.dataset_root = os.path.join(config.UPLOAD_FOLDER, 
+                                         user_id,
+                                         'dataset')
         dataset_path = self._get_dataset_path(user_id, dataset_name)
         self._user_id = user_id
         self._dataset_name = dataset_name
@@ -105,7 +107,7 @@ class DatasetHelper(object):
     @property
     def _meta_file_path(self):
         """Get the file name of metadata."""
-        path = os.path.join(self._user_root, self._meta_file_name)
+        path = os.path.join(self.dataset_root, self._meta_file_name)
         return path
 
     def _is_numeric(self, col_name):
@@ -117,10 +119,10 @@ class DatasetHelper(object):
         If exist, return path, else return None.
         """
         dataset_name = secure_filename(dataset_name)
-        dataset_path = os.path.join(self._user_root, dataset_name)
+        dataset_path = os.path.join(self.dataset_root, dataset_name)
 
         # Check if dataset file exists.
-        if os.path.exists(self._user_root) \
+        if os.path.exists(self.dataset_root) \
             and not os.path.exists(dataset_path):
             return None
         return dataset_path

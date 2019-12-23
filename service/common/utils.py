@@ -1,40 +1,89 @@
 import os
+import json
 import numpy as np
 import pandas as pd
 
+from werkzeug.utils import secure_filename
+
+import service.config as config
+
+
 class DatasetHelper(object):
-    '''
-        这个类是基于某个数据集，并在读取了数据集的基础上，提取一些信息
-    '''
-    def __init__(self, dataset_path):
-        '''
-            参数：
-                dataset_path表示数据集路径
-        '''
-        self._path = dataset_path
+    """This class ecapsulates operations over dataset.
+    """
+    
+    def __init__(self, user_id, dataset_name):
+        """
+        Args:
+            user_id: dataset this belongs to whom.
+            dataset_name: name of dataset.
+        """
+        self._user_root = os.path.join(config.UPLOAD_FOLDER, user_id)
+        dataset_path = self._get_dataset_path(user_id, dataset_name)
+        self._user_id = user_id
+        self._dataset_name = dataset_name
+        self._dataset_path = dataset_path
         self._df = pd.read_csv(dataset_path)
+    
+    def get_meta_data(self, from_file=False):
+        """Extract meta data.
+        Args:
+            from_file: if True, read metadata from json file,
+                else extract metadata from original dataset.
+        """
+        meta = {}
+        if from_file:
+            with open(self._meta_file_name) as f:
+                meta = json.load(f)
+        else:
+            meta['name'] = self._dataset_name
+            meta['size'] = self._dataset_size
+            meta['num_rows'] = self._num_rows
+            meta['columns'] = self._columns
+            
+        return meta
+    
+    def get_raw_data(self):
+        """Read and return raw 2-dimension data structure from dataset.
+        For example:
+        [
+    ​		["1", 2019, 30.5],
+    ​		["2", 2018, 50.3],
+    ​		["3", 2020, 19.0],
+        ​]
+        """
+        raw_data = self._df.values.tolist()
+        return raw_data
+        
+        
+    def save_meta_data(self, meta):
+        """Save meta data as json file."""
+        with open(self._meta_file_path, 'w') as f:
+            json.dump(meta, f)
 
-    def get_dataset_size(self):
-        '''
-            获取文件的大小
-        '''
-        return os.path.getsize(self._path)
+    @property
+    def _dataset_size(self):
+        """Size of dataset file."""
+        return os.path.getsize(self._dataset_path)
 
-    def get_num_rows(self):
-        '''
-            获取数据文件中表格的行数
-        '''
+    @property
+    def _num_rows(self):
+        """Number of rows of dataset."""
         return self._df.shape[0]
 
-    def get_columns(self):
-        '''
-            获取数据文件中的所有列信息，返回一个列表
+    @property
+    def _columns(self):
+        """Information of each column.
+        For example:
+        [
             {
                 name: '' ,
                 dtype: '' ,
                 type: '', // 'category'或者'numeric'
-            }
-        '''
+            },
+            ...
+        ]
+        """
         names = list(self._df.columns)
         dtypes = list(map(str, self._df.dtypes))
 
@@ -47,20 +96,32 @@ class DatasetHelper(object):
             column_info.append(info)
 
         return column_info
+    
+    @property
+    def _meta_file_name(self):
+        """Get name of metadata file according to dataset name."""
+        return self._dataset_name + '.meta'
+    
+    @property
+    def _meta_file_path(self):
+        """Get the file name of metadata."""
+        path = os.path.join(self._user_root, self._meta_file_name)
+        return path
 
     def _is_numeric(self, col_name):
-        '''
-            判断一列数据是否是numeric类型的
-        '''
+        """Determine a column is numeric or category."""
         return np.issubdtype(self._df[col_name].dtype, np.number)
+        
+    def _get_dataset_path(self, user_id, dataset_name):
+        """Check whether dataset file exists.
+        If exist, return path, else return None.
+        """
+        dataset_name = secure_filename(dataset_name)
+        dataset_path = os.path.join(self._user_root, dataset_name)
 
+        # Check if dataset file exists.
+        if os.path.exists(self._user_root) \
+            and not os.path.exists(dataset_path):
+            return None
+        return dataset_path
 
-
-def test():
-    helper = DatasetHelper('../../data/guest/iris.csv')
-    print(helper.get_dataset_size())
-    print(helper.get_num_rows())
-    print(helper.get_columns())
-
-if __name__ == '__main__':
-    test()

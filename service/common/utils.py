@@ -35,7 +35,7 @@ class DatasetHelper(object):
         """
         meta = {}
         if from_file:
-            with open(self._meta_file_name) as f:
+            with open(self._meta_file_path) as f:
                 meta = json.load(f)
         else:
             meta['name'] = self._dataset_name

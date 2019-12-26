@@ -127,3 +127,17 @@ class DatasetHelper(object):
             return None
         return dataset_path
 
+    @staticmethod
+    def get_dataset_by_user(user_id):
+        dataset_root = os.path.join(config.UPLOAD_FOLDER, 
+                                    user_id,
+                                    'dataset')
+        files = os.listdir(dataset_root)
+        data_files = []
+        for f in files:
+            if not f.endswith('.meta'):
+                data_files.append({
+                    "name": f
+                })
+        return data_files
+

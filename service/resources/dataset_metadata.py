@@ -30,8 +30,17 @@ class DatasetMetadata(Resource):
         
         return meta, 200
 
-    def get(self, user_id, dataset_name):
-        """Get metadata of a dataset."""
+    def get(self, user_id, dataset_name=None):
+        """
+            Get metadata of dataset.
+            If dataset_name is None, it will return user's
+            all dataset information.
+            Else, it will return a specific dataset's information.
+        """
+        # Read all dataset names when parameter dataset_name is not given.
+        if dataset_name is None:
+            files = DatasetHelper.get_dataset_by_user(user_id)
+            return files, 200
         helper = DatasetHelper(user_id, dataset_name)
         try:
             meta = helper.get_meta_data(from_file=True)

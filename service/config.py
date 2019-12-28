@@ -1,2 +1,3 @@
-# 需要全局共享的配置信息
-UPLOAD_FOLDER = 'data'
+# Global configuration variables.
+DATA_FOLDER = 'data'
+TRAINING_CONFIG_FILE_NAME = 'training_config'

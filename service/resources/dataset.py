@@ -32,7 +32,7 @@ class Dataset(Resource):
             not Dataset.allowed_file(file.filename):
             return {}, 400
         
-        directory = os.path.join(config.UPLOAD_FOLDER, 
+        directory = os.path.join(config.DATA_FOLDER, 
                                  user_id,
                                  'dataset')
 

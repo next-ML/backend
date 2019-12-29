@@ -17,6 +17,13 @@ class TrainingTaskHelper(object):
         with open(self._training_config_path, 'w') as f:
             json.dump(config_data, f)
     
+    def read_config_file(self):
+        if not os.path.exists(self._training_config_path):
+            return None
+        with open(self._training_config_path, 'r') as f:
+            config_data = json.load(f)
+        return config_data
+    
     @property
     def _task_folder(self):
         return os.path.join(config.DATA_FOLDER,

@@ -23,6 +23,10 @@ class TrainingConfig(Resource):
         helper.save_config_file(config_data)
         return config_data, 200
         
-    def get(self):
-        pass
+    def get(self, user_id, task_name):
+        helper = TrainingTaskHelper(user_id, task_name)
+        config_data = helper.read_config_file()
+        if config_data is None:
+            return {}, 400
+        return config_data, 200
 

@@ -25,7 +25,7 @@ class DatasetHelper(object):
         self._user_id = user_id
         self._dataset_name = dataset_name
         self._dataset_path = dataset_path
-        self._df = pd.read_csv(dataset_path)
+        self.df = pd.read_csv(dataset_path)
     
     def get_meta_data(self, from_file=False):
         """Extract meta data.
@@ -54,7 +54,7 @@ class DatasetHelper(object):
     ​		["3", 2020, 19.0],
         ​]
         """
-        raw_data = self._df.values.tolist()
+        raw_data = self.df.values.tolist()
         return raw_data
         
         
@@ -71,7 +71,7 @@ class DatasetHelper(object):
     @property
     def _num_rows(self):
         """Number of rows of dataset."""
-        return self._df.shape[0]
+        return self.df.shape[0]
 
     @property
     def _columns(self):
@@ -86,8 +86,8 @@ class DatasetHelper(object):
             ...
         ]
         """
-        names = list(self._df.columns)
-        dtypes = list(map(str, self._df.dtypes))
+        names = list(self.df.columns)
+        dtypes = list(map(str, self.df.dtypes))
 
         column_info = []
         for i in range(len(names)):
@@ -112,7 +112,7 @@ class DatasetHelper(object):
 
     def _is_numeric(self, col_name):
         """Determine a column is numeric or category."""
-        return np.issubdtype(self._df[col_name].dtype, np.number)
+        return np.issubdtype(self.df[col_name].dtype, np.number)
         
     def _get_dataset_path(self, user_id, dataset_name):
         """Check whether dataset file exists.

@@ -14,7 +14,8 @@ class TrainingConfig(Resource):
                              'label_columns',
                              'feature_columns',
                              'time_limit',
-                             'max_trial'])
+                             'max_trial',
+                             'evaluation'])
         # Check parameters's integrity.
         if set(config_data.keys()) != keys_to_check:
             return {}, 400

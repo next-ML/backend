@@ -49,12 +49,18 @@ class DatasetHelper(object):
         """Read and return raw 2-dimension data structure from dataset.
         For example:
         [
-    ​		["1", 2019, 30.5],
-    ​		["2", 2018, 50.3],
-    ​		["3", 2020, 19.0],
+        ​		["1", 2019, 30.5],
+        ​		["2", 2018, 50.3],
+        ​		["3", 2020, 19.0],
         ​]
         """
-        raw_data = self.df.values.tolist()
+        # Not use self.df.values.tolist() because of float precision.
+        raw_data = []
+        for index, raw in self.df.iterrows():
+            r = []
+            for col in self.df.columns:
+                r.append(str(raw[col]))
+            raw_data.append(r)
         return raw_data
         
         

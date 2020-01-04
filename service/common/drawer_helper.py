@@ -21,6 +21,7 @@ class DrawerHelper(object):
         Return:
             A config object describe how to draw histgram.
         """
+        plt.clf()
         cols = self._dataset_helper.df[columns]
         ax = sns.distplot(cols, kde = False)
         x_width = ax.patches[0].get_width()

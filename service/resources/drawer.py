@@ -24,9 +24,10 @@ class Drawer(Resource):
             return {}, 400
 
         if data['chart_type'] == 'distribution':
+            attrs = [attr['name'] for attr in data['row_attrs']]
             config = self.draw_distribution(user_id,
                                             data['dataset_name'], 
-                                            data['row_attrs'])
+                                            attrs)
         
         return config, 200
     

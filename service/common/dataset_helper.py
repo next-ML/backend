@@ -54,13 +54,9 @@ class DatasetHelper(object):
         ​		["3", 2020, 19.0],
         ​]
         """
-        # Not use self.df.values.tolist() because of float precision.
-        raw_data = []
-        for index, raw in self.df.iterrows():
-            r = []
-            for col in self.df.columns:
-                r.append(str(raw[col]))
-            raw_data.append(r)
+        # First convert values to string, to aviod float precision problem.
+        df_to_transfer = self.df[self.df.columns].astype(str)
+        raw_data = df_to_transfer.values.tolist()
         return raw_data
         
         

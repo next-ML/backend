@@ -21,12 +21,21 @@ class DrawerHelper(object):
         Return:
             A config object describe how to draw histgram.
         """
-        plt.clf()
-        cols = self._dataset_helper.df[columns]
-        ax = sns.distplot(cols, kde = False)
-        x_width = ax.patches[0].get_width()
-        x_axis = [(h.get_x(), h.get_x() + x_width) for h in ax.patches]
-        heights = [h.get_height() for h in ax.patches]
+        
+        if not columns:
+            # Return a zero bar if column is null.
+            x_axis = [0, 0],
+            heights = [0]
+        else:
+            if len(columns) > 1:
+                columns = columns[0]
+            plt.clf()
+            cols = self._dataset_helper.df[columns]
+            ax = sns.distplot(cols, kde = False)
+            x_width = ax.patches[0].get_width()
+            x_axis = [(h.get_x(), h.get_x() + x_width) for h in ax.patches]
+            heights = [h.get_height() for h in ax.patches]
+            
         return {
             'chart_type': 'distribution_histgram',
             'data': {

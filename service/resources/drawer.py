@@ -27,6 +27,8 @@ class Drawer(Resource):
             draw_setting = self.draw_distribution(drawer_helper, attrs)
         elif data['chart_type'] == 'covariance':
             draw_setting = self.draw_covariance(drawer_helper)
+        elif data['chart_type'] == 'weight':
+            draw_setting = self.draw_weight(drawer_helper)
         
         return draw_setting, 200
     
@@ -36,5 +38,9 @@ class Drawer(Resource):
       
     def draw_covariance(self, drawer_helper):
         draw_setting = drawer_helper.draw_covariance_heatmap()
+        return draw_setting
+      
+    def draw_weight(self, drawer_helper):
+        draw_setting = drawer_helper.draw_feature_importance()
         return draw_setting
         

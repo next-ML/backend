@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.linear_model import LinearRegression
 
 from service.common.dataset_helper import DatasetHelper
 
@@ -14,22 +15,6 @@ class DrawerHelper(object):
         """
         self._dataset_helper = DatasetHelper(user_id, dataset_name)
         self._target_col = target_col
-        
-    def draw_covariance_heatmap(self):
-        """Draw a heatmap whose content is covariance of features.
-        
-        Firstly, the algorithm will select top k features to draw.
-        """
-        # Only select top k.
-        k = 12
-        
-        corrmat = self._dataset_helper.df.corr()
-        cols = corrmat.nlargest(k, self._target_col)[self._target_col].index
-        cm = np.corrcoef(self._dataset_helper.df[cols].values.T)
-        return {
-            'columns': list(cols),
-            'covariance_matrix': cm.tolist()
-        }
 
         
     def draw_distribution_histgram(self, columns):
@@ -60,6 +45,42 @@ class DrawerHelper(object):
                 'x_axis': x_axis,
                 'heights': heights
             }
+        }
+        
+    def draw_covariance_heatmap(self):
+        """Draw a heatmap whose content is covariance of features.
+        
+        Firstly, the algorithm will select top k features to draw.
+        Then calculate the covariance matrix between selected features.
+        """
+        # Only select top k.
+        k = 12
+        
+        corrmat = self._dataset_helper.df.corr()
+        cols = corrmat.nlargest(k, self._target_col)[self._target_col].index
+        cm = np.corrcoef(self._dataset_helper.df[cols].values.T)
+        return {
+            'columns': list(cols),
+            'covariance_matrix': cm.tolist()
+        }
+        
+    def draw_feature_importance(self):
+        """Draw a bar plot represent feature importance.
+        
+        First train a linear regression model.
+        Then use weight to represent the feature importance.
+        """
+        model = LinearRegression()
+        df = self._dataset_helper.df
+        y = df[self._target_col]
+        x = df.drop(self._target_col, axis=1)
+        model.fit(x, y)
+        coef = list(map(abs, model.coef_))
+        importance = zip(list(x.columns), coef)
+        importance = sorted(importance, key=lambda x: abs(x[1]), reverse=True)
+        return {
+            'features': [v[0] for v in importance],
+            'weights': [v[1] for v in importance]
         }
         
     

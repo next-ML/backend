@@ -8,11 +8,29 @@ from service.common.dataset_helper import DatasetHelper
 
 class DrawerHelper(object):
 
-    def __init__(self, user_id, dataset_name):
+    def __init__(self, user_id, dataset_name, target_col='jinpu_ug_ml'):
         """
 
         """
         self._dataset_helper = DatasetHelper(user_id, dataset_name)
+        self._target_col = target_col
+        
+    def draw_covariance_heatmap(self):
+        """Draw a heatmap whose content is covariance of features.
+        
+        Firstly, the algorithm will select top k features to draw.
+        """
+        # Only select top k.
+        k = 12
+        
+        corrmat = self._dataset_helper.df.corr()
+        cols = corrmat.nlargest(k, self._target_col)[self._target_col].index
+        cm = np.corrcoef(self._dataset_helper.df[cols].values.T)
+        return {
+            'columns': list(cols),
+            'covariance_matrix': cm.tolist()
+        }
+
         
     def draw_distribution_histgram(self, columns):
         """Draw a distribution histgram.

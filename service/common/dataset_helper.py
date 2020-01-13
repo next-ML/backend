@@ -96,7 +96,7 @@ class DatasetHelper(object):
             info = {}
             info['name'] = names[i]
             info['dtype'] = dtypes[i]
-            info['type'] = 'numeric' if self._is_numeric(names[i]) else 'category'
+            info['type'] = 'numeric' if self.is_numeric(names[i]) else 'category'
             column_info.append(info)
 
         return column_info
@@ -112,9 +112,9 @@ class DatasetHelper(object):
         path = os.path.join(self.dataset_root, self._meta_file_name)
         return path
 
-    def _is_numeric(self, col_name):
+    def is_numeric(self, col_name):
         """Determine a column is numeric or category."""
-        return np.issubdtype(self.df[col_name].dtype, np.number)
+        return np.issubdtype(self.df[col_name].dtype, np.inexact)
         
     def _get_dataset_path(self, user_id, dataset_name):
         """Check whether dataset file exists.

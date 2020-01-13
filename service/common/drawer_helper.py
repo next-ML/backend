@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib.cbook import boxplot_stats
 from sklearn.linear_model import LinearRegression
 
 from service.common.dataset_helper import DatasetHelper
@@ -83,4 +84,34 @@ class DrawerHelper(object):
             'weights': [v[1] for v in importance]
         }
         
-    
+    def draw_boxing_chart(self):
+        """Draw a boxplot present relation between top k features and target.
+        
+        Return a list of boxplot configuration.
+        """
+        # Select only top k features.
+        k = 4
+        
+        columns = self._top_k_importance(self._filter_category(), k)
+        # print(self._dataset_helper.df.shape)
+        box_setting = []
+        for col in columns:
+            plt.clf()
+            df = self._dataset_helper.df[[col, self._target_col]]
+            stats = boxplot_stats(df, labels=[col])
+            print(stats)
+            sns.boxplot(x=col, y=self._target_col, data=self._dataset_helper.df)
+            plt.show()
+        
+    def _filter_numeric(self):
+        columns = self._dataset_helper.df.columns
+        return [col for col in columns if self._dataset_helper.is_numeric(col)]
+      
+    def _filter_category(self):
+        columns = self._dataset_helper.df.columns
+        return [col for col in columns if not self._dataset_helper.is_numeric(col)]
+        
+    def _top_k_importance(self, columns, k):
+        # return columns[1:k+1]
+        return ['charge_of_the_rest', 'negative_charge', 'ph_number', 'length']
+

@@ -93,15 +93,26 @@ class DrawerHelper(object):
         k = 4
         
         columns = self._top_k_importance(self._filter_category(), k)
-        # print(self._dataset_helper.df.shape)
         box_setting = []
         for col in columns:
-            plt.clf()
-            df = self._dataset_helper.df[[col, self._target_col]]
-            stats = boxplot_stats(df, labels=[col])
-            print(stats)
-            sns.boxplot(x=col, y=self._target_col, data=self._dataset_helper.df)
-            plt.show()
+            box_setting += self._draw_boxplot(col)
+        return box_setting
+    
+    def _draw_boxplot(self, col):
+        df = self._dataset_helper.df[[col, self._target_col]]
+        values = sorted(df[col].unique())
+        stats = []
+        for v in values:
+            processed = {}
+            s = boxplot_stats(df[df[col] == v][self._target_col].values)[0]
+            key_points = ['whislo', 'q1', 'med', 'q3', 'whishi']
+            points = []
+            for k in key_points:
+                points.append(round(float(s[k]), 3))
+            processed['points'] = points
+            processed['outliers'] = s['fliers'].round(3).tolist()
+            stats.append(processed)
+        return stats
         
     def _filter_numeric(self):
         columns = self._dataset_helper.df.columns

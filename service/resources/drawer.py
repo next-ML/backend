@@ -29,8 +29,8 @@ class Drawer(Resource):
             draw_setting = self.draw_covariance(drawer_helper)
         elif data['chart_type'] == 'weight':
             draw_setting = self.draw_weight(drawer_helper)
-        elif data['chart_type'] == 'weight':
-            draw_setting = self.draw_weight(drawer_helper)
+        elif data['chart_type'] == 'boxing':
+            draw_setting = self.draw_boxing(drawer_helper)
         
         return draw_setting, 200
     

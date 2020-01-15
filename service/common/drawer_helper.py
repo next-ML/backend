@@ -95,7 +95,10 @@ class DrawerHelper(object):
         columns = self._top_k_importance(self._filter_category(), k)
         box_setting = []
         for col in columns:
-            box_setting += self._draw_boxplot(col)
+            box_setting.append({
+              "name": col,
+              "boxes": self._draw_boxplot(col)
+            })
         return box_setting
     
     def _draw_boxplot(self, col):
@@ -109,6 +112,7 @@ class DrawerHelper(object):
             points = []
             for k in key_points:
                 points.append(round(float(s[k]), 3))
+            processed['name'] = str(v)
             processed['points'] = points
             processed['outliers'] = s['fliers'].round(3).tolist()
             stats.append(processed)
@@ -125,4 +129,29 @@ class DrawerHelper(object):
     def _top_k_importance(self, columns, k):
         # return columns[1:k+1]
         return ['charge_of_the_rest', 'negative_charge', 'ph_number', 'length']
-
+      
+    def draw_scatter_chart(self):
+        """Draw a scatter of top k important features.
+        """
+        # Select only top k features.
+        k = 4
+        
+        columns = ['hydrophobicity', 'Mw', 'F6_of_all', 'F5_of_the_rest']
+        
+        scatter_setting = []
+        for col in columns:
+            scatter_setting.append(self._draw_scatterplot(col))
+        return scatter_setting
+            
+    def _draw_scatterplot(self, col):
+        df = self._dataset_helper.df[[col, self._target_col]]
+        points = []
+        for index, row in df.iterrows():
+            x = round(float(row[col]), 3)
+            y = round(float(row[self._target_col]), 3)
+            points.append([x, y])
+        return {
+            "name": col,
+            "points": points
+        }
+    

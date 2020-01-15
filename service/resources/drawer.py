@@ -15,7 +15,7 @@ class Drawer(Resource):
         data = request.get_json()
         check_key = set(['dataset_name', 
                          'chart_type'])
-        if check_key != set(data.keys()):
+        if check_key > set(data.keys()):
             return {}, 400
 
         drawer_helper = DrawerHelper(user_id, data['dataset_name'])
@@ -31,6 +31,8 @@ class Drawer(Resource):
             draw_setting = self.draw_weight(drawer_helper)
         elif data['chart_type'] == 'boxing':
             draw_setting = self.draw_boxing(drawer_helper)
+        elif data['chart_type'] == 'scatter':
+            draw_setting = self.draw_scatter(drawer_helper)
         
         return draw_setting, 200
     
@@ -48,5 +50,9 @@ class Drawer(Resource):
       
     def draw_boxing(self, drawer_helper):
         draw_setting = drawer_helper.draw_boxing_chart()
+        return draw_setting
+      
+    def draw_scatter(self, drawer_helper):
+        draw_setting = drawer_helper.draw_scatter_chart()
         return draw_setting
         

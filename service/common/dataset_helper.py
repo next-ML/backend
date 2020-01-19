@@ -55,8 +55,17 @@ class DatasetHelper(object):
         ​]
         """
         # First convert values to string, to aviod float precision problem.
-        df_to_transfer = self.df[self.df.columns].astype(str)
-        raw_data = df_to_transfer.values.tolist()
+        # df_to_transfer = self.df[self.df.columns].astype(str)
+        # raw_data = df_to_transfer.values.tolist()
+        raw_data = []
+        for row in self.df.values:
+            r = []
+            for col in row:
+                if np.issubdtype(col, np.inexact):
+                    r.append(round(float(col), 3))
+                else:
+                    r.append(str(col))
+            raw_data.append(r)
         return raw_data
         
         

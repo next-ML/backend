@@ -56,8 +56,6 @@ from sklearn.model_selection._split import check_cv
 
 from joblib import Parallel, delayed, Memory
 
-from update_checker import update_check
-
 from ._version import __version__
 from .operator_utils import TPOTOperatorClassFactory, Operator, ARGType
 from .export_utils import export_pipeline, expr_to_tree, generate_pipeline_code, set_param_recursive
@@ -576,10 +574,6 @@ class TPOTBase(BaseEstimator):
         # run-time limit TPOT will automatically interrupt itself when the timer runs out
         if self.max_time_mins is not None and self.generations is None :
             self.generations = 1000000
-
-        # Prompt the user if their version is out of date
-        if not self.disable_update_check:
-            update_check('tpot', __version__)
 
         if self.mutation_rate + self.crossover_rate > 1:
             raise ValueError(

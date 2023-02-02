@@ -1,4 +1,4 @@
-Werkzeug==0.14.1
+Werkzeug==0.15.5
 Flask_RESTful==0.3.6
 seaborn==0.8.1
 pandas==0.23.0
